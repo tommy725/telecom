@@ -3,6 +3,7 @@ package pl.tele.frontend;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import pl.tele.backend.DoubleCorrection;
 
@@ -22,7 +23,7 @@ public class MainFormController {
     public TextArea codedForm;
     public Button save1;
     public Button save2;
-    public Button reset;
+    public ComboBox singleDoubleCorrectionCombobox;
     public Button encode;
     public Button decode;
 
@@ -107,28 +108,16 @@ public class MainFormController {
     }
 
     /**
-     * Methods resets file and able to insert text
-     */
-    public void reset() {
-        originalData = null;
-        codedData = null;
-        clearTextFields();
-        save1.setDisable(true);
-        save2.setDisable(true);
-        reset.setDisable(true);
-        originalForm.setDisable(false);
-        codedForm.setDisable(false);
-        decode.setDisable(false);
-        encode.setDisable(false);
-    }
-
-
-    /**
      * Method to start encryption from GUI and return result on textField and encodeData
      */
     public void encode() {
-        DoubleCorrection dc = new DoubleCorrection();
-        codedForm.setText(dc.encode(originalForm.getText()));
+        if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
+
+        }
+        if (singleDoubleCorrectionCombobox.getValue().equals("2 błędy")) {
+            DoubleCorrection dc = new DoubleCorrection();
+            codedForm.setText(dc.encode(originalForm.getText()));
+        }
     }
 
     /**
