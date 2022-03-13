@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import pl.tele.backend.DoubleCorrection;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -39,12 +40,12 @@ public class MainFormController {
      */
     public void readFromFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
-        String strPath = FileChoose.openChooser("Choose a file to encrypt", false, actionEvent);
+        String strPath = FileChoose.openChooser("Choose a file to encode", false, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             originalData = Files.readAllBytes(p);
             clearTextFields();
-            originalForm.setText(byteArrayToString(originalData));
+            originalForm.setText(byteArrayToBitString(originalData));
         }
     }
 
@@ -83,7 +84,7 @@ public class MainFormController {
             Path p = Paths.get(strPath);
             codedData = Files.readAllBytes(p);
             clearTextFields();
-            codedForm.setText(byteArrayToString(codedData));
+            codedForm.setText(byteArrayToBitString(codedData));
         }
     }
 
@@ -126,6 +127,8 @@ public class MainFormController {
      * Method to start encryption from GUI and return result on textField and encodeData
      */
     public void encode() {
+        DoubleCorrection dc = new DoubleCorrection();
+        codedForm.setText(dc.encode(originalForm.getText()));
     }
 
     /**
@@ -140,10 +143,10 @@ public class MainFormController {
      * @param data byteArray
      * @return String
      */
-    private String byteArrayToString(byte[] data) {
+    private String byteArrayToBitString(byte[] data) {
         StringBuilder buffer = new StringBuilder();
         for (byte b : data) {
-            buffer.append((char) b);
+            buffer.append(Integer.toBinaryString(b));
         }
         return buffer.toString();
     }
