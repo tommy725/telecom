@@ -125,8 +125,7 @@ public class MainFormController {
      */
     public void decode() {
         if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
-            SingleCorrection sc = new SingleCorrection();
-            originalForm.setText(sc.encode(codedForm.getText()));
+
         }
         if (singleDoubleCorrectionCombobox.getValue().equals("2 błędy")) {
             DoubleCorrection dc = new DoubleCorrection();
