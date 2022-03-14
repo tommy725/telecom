@@ -8,10 +8,6 @@ public abstract class Correction {
         this.columns = columns;
     }
 
-    public void sethMatrix(int[][] hMatrix) {
-        this.hMatrix = hMatrix;
-    }
-
     public String encode(String bitsString) {
         StringBuilder sb = new StringBuilder();
         sb.append(bitsString);
