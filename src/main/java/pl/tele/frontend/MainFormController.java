@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import pl.tele.backend.DoubleCorrection;
+import pl.tele.backend.SingleCorrection;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -112,7 +113,8 @@ public class MainFormController {
      */
     public void encode() {
         if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
-
+            SingleCorrection sc = new SingleCorrection();
+            codedForm.setText(sc.encode(originalForm.getText()));
         }
         if (singleDoubleCorrectionCombobox.getValue().equals("2 błędy")) {
             DoubleCorrection dc = new DoubleCorrection();
