@@ -1,8 +1,7 @@
 package pl.tele.backend;
+import java.util.Arrays;
 
-import java.util.stream.IntStream;
-
-public class SingleCorrection {
+public class SingleCorrection extends Correction{
     private int[][] hMatrix = {
             {1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0},
             {1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0},
@@ -10,23 +9,9 @@ public class SingleCorrection {
             {0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1},
     };
 
-    public String encode(String bitsString) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(bitsString);
-        for (int i = 0; i < 4; i++) {
-            int rowResult = 0;
-            for (int j = 0; j < 8; j++) {
-                int originalBit = Integer.parseInt(bitsString.substring(j, j + 1));
-                int matrixBit = hMatrix[i][j];
-                rowResult += originalBit * matrixBit;
-            }
-            if (rowResult % 2 == 0) {
-                sb.append(0);
-            } else {
-                sb.append(1);
-            }
-        }
-        return sb.toString();
+    public SingleCorrection() {
+        super(4);
+        super.hMatrix = hMatrix;
     }
 
     public String decode(String bitsString) {
@@ -38,11 +23,7 @@ public class SingleCorrection {
                 int matrixBit = hMatrix[i][j];
                 rowResult += codedBit * matrixBit;
             }
-            if (rowResult % 2 == 0) {
-                he.append(0);
-            } else {
-                he.append(1);
-            }
+            he.append(rowResult % 2);
         }
         int diff = -1;
         for (int i = 0; i < 12; i++) {
@@ -50,7 +31,6 @@ public class SingleCorrection {
                 diff = i;
             }
         }
-        System.out.println(diff);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 8; i++) {
             if (i == diff) {
@@ -60,15 +40,14 @@ public class SingleCorrection {
                     sb.append(1);
                 }
             } else {
-                sb.append(bitsString.substring(i, i + 1));
+                sb.append(bitsString.charAt(i));
             }
         }
         return sb.toString();
     }
 
     String getColumn(int[][] matrix, int column) {
-        int[] bitsArray = IntStream.range(0, matrix.length)
-                .map(i -> matrix[i][column]).toArray();
+        int[] bitsArray = Arrays.stream(matrix).mapToInt(ints -> ints[column]).toArray();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             sb.append(bitsArray[i]);
