@@ -2,6 +2,7 @@ package pl.tele.frontend;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
@@ -112,6 +113,10 @@ public class MainFormController {
      * Method to start encryption from GUI and return result on textField and encodeData
      */
     public void encode() {
+        if (singleDoubleCorrectionCombobox.getValue() == null) {
+            AlertBox.alertShow("Program error","Nie wybrano ilości błędów", Alert.AlertType.ERROR);
+            return;
+        }
         if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
             SingleCorrection sc = new SingleCorrection();
             codedForm.setText(sc.encode(originalForm.getText()));
@@ -126,6 +131,10 @@ public class MainFormController {
      * Method to start decryption from GUI and return result on textField and to decodedData
      */
     public void decode() {
+        if (singleDoubleCorrectionCombobox.getValue() == null) {
+            AlertBox.alertShow("Program error","Nie wybrano ilości błędów", Alert.AlertType.ERROR);
+            return;
+        }
         if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
             SingleCorrection sc = new SingleCorrection();
             originalForm.setText(sc.decode(codedForm.getText()));
