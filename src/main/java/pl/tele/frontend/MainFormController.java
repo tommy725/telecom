@@ -3,7 +3,10 @@ package pl.tele.frontend;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import pl.tele.backend.DoubleCorrection;
+import pl.tele.backend.SingleCorrection;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -21,7 +24,7 @@ public class MainFormController {
     public TextArea codedForm;
     public Button save1;
     public Button save2;
-    public Button reset;
+    public ComboBox singleDoubleCorrectionCombobox;
     public Button encode;
     public Button decode;
 
@@ -39,12 +42,12 @@ public class MainFormController {
      */
     public void readFromFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
-        String strPath = FileChoose.openChooser("Choose a file to encrypt", false, actionEvent);
+        String strPath = FileChoose.openChooser("Choose a file to encode", false, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             originalData = Files.readAllBytes(p);
             clearTextFields();
-            originalForm.setText(byteArrayToString(originalData));
+            originalForm.setText(byteArrayToBitString(originalData));
         }
     }
 
@@ -83,7 +86,7 @@ public class MainFormController {
             Path p = Paths.get(strPath);
             codedData = Files.readAllBytes(p);
             clearTextFields();
-            codedForm.setText(byteArrayToString(codedData));
+            codedForm.setText(byteArrayToBitString(codedData));
         }
     }
 
@@ -106,32 +109,27 @@ public class MainFormController {
     }
 
     /**
-     * Methods resets file and able to insert text
-     */
-    public void reset() {
-        originalData = null;
-        codedData = null;
-        clearTextFields();
-        save1.setDisable(true);
-        save2.setDisable(true);
-        reset.setDisable(true);
-        originalForm.setDisable(false);
-        codedForm.setDisable(false);
-        decode.setDisable(false);
-        encode.setDisable(false);
-    }
-
-
-    /**
      * Method to start encryption from GUI and return result on textField and encodeData
      */
     public void encode() {
+        if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
+            SingleCorrection sc = new SingleCorrection();
+            codedForm.setText(sc.encode(originalForm.getText()));
+        }
+        if (singleDoubleCorrectionCombobox.getValue().equals("2 błędy")) {
+            DoubleCorrection dc = new DoubleCorrection();
+            codedForm.setText(dc.encode(originalForm.getText()));
+        }
     }
 
     /**
      * Method to start decryption from GUI and return result on textField and to decodedData
      */
     public void decode() {
+        if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
+            SingleCorrection sc = new SingleCorrection();
+            originalForm.setText(sc.decode(codedForm.getText()));
+        }
     }
 
     /**
@@ -140,10 +138,10 @@ public class MainFormController {
      * @param data byteArray
      * @return String
      */
-    private String byteArrayToString(byte[] data) {
+    private String byteArrayToBitString(byte[] data) {
         StringBuilder buffer = new StringBuilder();
         for (byte b : data) {
-            buffer.append((char) b);
+            buffer.append(Integer.toBinaryString(b));
         }
         return buffer.toString();
     }

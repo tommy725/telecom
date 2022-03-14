@@ -7,7 +7,7 @@ import static pl.tele.frontend.MainFormController.*;
 
 /**
  * =========================================================
- * AES ENCRYPTOR/DECRYPTOR (2022)
+ * ERROR SINGLE/DOUBLE CORRECTER (2022)
  * Kamil Bednarek 236500, Radosław Bucki 236507
  * =========================================================
  */
