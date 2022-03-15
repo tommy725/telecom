@@ -2,19 +2,18 @@ package pl.tele.frontend;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import pl.tele.backend.Correction;
 import pl.tele.backend.DoubleCorrection;
 import pl.tele.backend.SingleCorrection;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 
 public class MainFormController {
 
@@ -27,6 +26,7 @@ public class MainFormController {
     public Button save1;
     public Button save2;
     public ComboBox singleDoubleCorrectionCombobox;
+    public CheckBox binaryCheckbox;
     public Button encode;
     public Button decode;
 
@@ -49,7 +49,8 @@ public class MainFormController {
             Path p = Paths.get(strPath);
             originalData = Files.readAllBytes(p);
             clearTextFields();
-            originalForm.setText(byteArrayToBitString(originalData));
+            byte[] encoded = Base64.getEncoder().encode(originalData);
+            originalForm.setText(new String(encoded));
         }
     }
 
@@ -115,7 +116,7 @@ public class MainFormController {
      */
     public void encode() {
         if (singleDoubleCorrectionCombobox.getValue() == null) {
-            AlertBox.alertShow("Program error","Nie wybrano ilości błędów!", Alert.AlertType.ERROR);
+            AlertBox.alertShow("Program error", "Nie wybrano ilości błędów!", Alert.AlertType.ERROR);
             return;
         }
         if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
@@ -132,17 +133,35 @@ public class MainFormController {
      * Method to start decryption from GUI and return result on textField and to decodedData
      */
     public void decode() {
+//        for (int i = 0; i < codedForm.getText().length(); i++) {
+//            if (codedForm.getText().charAt(i) != '0' && codedForm.getText().charAt(i) != '1') {
+//                AlertBox.alertShow("Program error", "Postać do dekodowania musi być zapisana binarnie!", Alert.AlertType.ERROR);
+//                return;
+//            }
+//        }
         if (singleDoubleCorrectionCombobox.getValue() == null) {
-            AlertBox.alertShow("Program error","Nie wybrano ilości błędów", Alert.AlertType.ERROR);
+            AlertBox.alertShow("Program error", "Nie wybrano ilości błędów", Alert.AlertType.ERROR);
             return;
         }
+        String decodedBitsString = null;
         if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
             SingleCorrection sc = new SingleCorrection();
-            originalForm.setText(sc.decode(codedForm.getText()));
+            decodedBitsString = startDecoding(sc, 12);
         }
         if (singleDoubleCorrectionCombobox.getValue().equals("2 błędy")) {
             DoubleCorrection dc = new DoubleCorrection();
-            originalForm.setText(dc.decode(codedForm.getText()));
+            decodedBitsString = startDecoding(dc, 16);
+        }
+        if (binaryCheckbox.isSelected()) {
+            originalForm.setText(decodedBitsString);
+        } else {
+            byte[] textBytes = new byte[decodedBitsString.length() / 8];
+            for (int i = 0; i < decodedBitsString.length(); i += 8) {
+                byte b = Byte.parseByte(decodedBitsString.substring(i, i + 8), 2);
+                textBytes[i / 8] = b;
+            }
+            String s = new String(textBytes, StandardCharsets.UTF_8);
+            originalForm.setText(s);
         }
     }
 
@@ -172,9 +191,8 @@ public class MainFormController {
         for (int i = 0; i < originalForm.getText().length(); i++) {
             if (originalForm.getText().charAt(i) != '0' && originalForm.getText().charAt(i) != '1') {
                 StringBuilder sb = new StringBuilder();
-                byte[] bytes = originalForm.getText().getBytes();
+                byte[] bytes = originalForm.getText().getBytes(StandardCharsets.UTF_8);
                 for (byte aByte : bytes) {
-                    System.out.println(Integer.toBinaryString(aByte));
                     StringBuilder byteToBits = new StringBuilder();
                     if (Integer.toBinaryString(aByte).length() != 8) {
                         for (int j = Integer.toBinaryString(aByte).length(); j < 8; j++) {
@@ -188,12 +206,24 @@ public class MainFormController {
             }
         }
         if (originalForm.getText().length() % 8 != 0) {
-            AlertBox.alertShow("Program error","Liczba bitów musi być podzielna przez 8!", Alert.AlertType.ERROR);
+            AlertBox.alertShow("Program error", "Liczba bitów musi być podzielna przez 8!", Alert.AlertType.ERROR);
             return "Error";
         }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < originalForm.getText().length(); i += 8) {
-            sb.append(c.encode(originalForm.getText().substring(i,i+8)));
+            sb.append(c.encode(originalForm.getText().substring(i, i + 8)));
+        }
+        return sb.toString();
+    }
+
+    private String startDecoding(Correction c, int bits) {
+        if (codedForm.getText().length() % bits != 0) {
+            AlertBox.alertShow("Program error", "Liczba bitów do odkodowania przy korekcji 2 błędów musi być podzielna przez " + bits + "!", Alert.AlertType.ERROR);
+            return "Error";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < codedForm.getText().length(); i += bits) {
+            sb.append(c.decode(codedForm.getText().substring(i, i + bits)));
         }
         return sb.toString();
     }

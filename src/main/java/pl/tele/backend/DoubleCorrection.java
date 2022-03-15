@@ -36,15 +36,11 @@ public class DoubleCorrection extends Correction{
                 diff1 = i;
                 break;
             }
-        }
-        if (diff1 == -1) {
-            for (int i = 0; i < 16; i++) {
-                for (int j = i + 1; j < 16; j++) {
-                    if (he.toString().equals(getColumnSum(hMatrix, i, j))) {
-                        diff1 = i;
-                        diff2 = j;
-                        break;
-                    }
+            for (int j = i + 1; j < 16; j++) {
+                if (he.toString().equals(getColumnSum(hMatrix, i, j))) {
+                    diff1 = i;
+                    diff2 = j;
+                    break;
                 }
             }
         }

@@ -22,4 +22,8 @@ public abstract class Correction {
         }
         return sb.toString();
     }
+
+    public String decode(String bitsString) {
+        return null;
+    }
 }
