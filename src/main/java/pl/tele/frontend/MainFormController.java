@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
+import pl.tele.backend.Correction;
 import pl.tele.backend.DoubleCorrection;
 import pl.tele.backend.SingleCorrection;
 
@@ -114,16 +115,16 @@ public class MainFormController {
      */
     public void encode() {
         if (singleDoubleCorrectionCombobox.getValue() == null) {
-            AlertBox.alertShow("Program error","Nie wybrano ilości błędów", Alert.AlertType.ERROR);
+            AlertBox.alertShow("Program error","Nie wybrano ilości błędów!", Alert.AlertType.ERROR);
             return;
         }
         if (singleDoubleCorrectionCombobox.getValue().equals("1 błąd")) {
             SingleCorrection sc = new SingleCorrection();
-            codedForm.setText(sc.encode(originalForm.getText()));
+            codedForm.setText(startEncode(sc));
         }
         if (singleDoubleCorrectionCombobox.getValue().equals("2 błędy")) {
             DoubleCorrection dc = new DoubleCorrection();
-            codedForm.setText(dc.encode(originalForm.getText()));
+            codedForm.setText(startEncode(dc));
         }
     }
 
@@ -165,5 +166,35 @@ public class MainFormController {
     private void clearTextFields() {
         originalForm.setText("");
         codedForm.setText("");
+    }
+
+    private String startEncode(Correction c) {
+        for (int i = 0; i < originalForm.getText().length(); i++) {
+            if (originalForm.getText().charAt(i) != '0' && originalForm.getText().charAt(i) != '1') {
+                StringBuilder sb = new StringBuilder();
+                byte[] bytes = originalForm.getText().getBytes();
+                for (byte aByte : bytes) {
+                    System.out.println(Integer.toBinaryString(aByte));
+                    StringBuilder byteToBits = new StringBuilder();
+                    if (Integer.toBinaryString(aByte).length() != 8) {
+                        for (int j = Integer.toBinaryString(aByte).length(); j < 8; j++) {
+                            byteToBits.append(0);
+                        }
+                        byteToBits.append(Integer.toBinaryString(aByte));
+                    }
+                    sb.append(c.encode(byteToBits.toString()));
+                }
+                return sb.toString();
+            }
+        }
+        if (originalForm.getText().length() % 8 != 0) {
+            AlertBox.alertShow("Program error","Liczba bitów musi być podzielna przez 8!", Alert.AlertType.ERROR);
+            return "Error";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < originalForm.getText().length(); i += 8) {
+            sb.append(c.encode(originalForm.getText().substring(i,i+8)));
+        }
+        return sb.toString();
     }
 }
