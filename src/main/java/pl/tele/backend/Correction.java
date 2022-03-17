@@ -40,7 +40,7 @@ public abstract class Correction {
      */
     public String get8BitsWithChangeOnPosition(String bitsString, int diff) {
         StringBuilder sb = new StringBuilder(bitsString.substring(0, 8));
-        if (diff > -1) {
+        if (diff > -1 && diff < 8) {
             if (bitsString.charAt(diff) == '1') {
                 sb.setCharAt(diff, '0');
             } else {

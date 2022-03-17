@@ -87,7 +87,7 @@ public class MainFormController {
      */
     public void writeToFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
-        String strPath = FileChoose.saveChooser("Choose a file to encrypt", false, actionEvent);
+        String strPath = FileChoose.saveChooser("Choose a file to encode", false, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             if (originalData != null) {
@@ -100,7 +100,7 @@ public class MainFormController {
 
     public void writeToFile2(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
-        String strPath = FileChoose.saveChooser("Choose a file to encrypt", false, actionEvent);
+        String strPath = FileChoose.saveChooser("Choose a file to encode", false, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             byte[] bytes = new byte[codedForm.getText().length()/8];
