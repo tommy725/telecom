@@ -25,14 +25,12 @@ public class MainFormController {
     public TextArea originalForm;
     public TextArea codedForm;
     public Button save1;
-    public Button save2;
     public ComboBox singleDoubleCorrectionCombobox;
     public CheckBox binaryCheckbox;
     public Button encode;
     public Button decode;
 
     private byte[] originalData;
-    private byte[] codedData;
 
     /**
      * Method reads plain byte array from given file
@@ -73,47 +71,14 @@ public class MainFormController {
         }
     }
 
-    /**
-     * Method reads encrypted byte array from given file
-     *
-     * @param actionEvent eventFromJavaFX
-     * @throws InvocationTargetException exception
-     * @throws NoSuchMethodException     exception
-     * @throws IllegalAccessException    exception
-     * @throws IOException               exception
-     */
-    public void readFromFileEncrypted(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
-            IllegalAccessException, IOException {
-        String strPath = FileChoose.openChooser("Choose an encrypted file to decrypt",
-                false, actionEvent);
-        if (!strPath.equals("")) {
-            Path p = Paths.get(strPath);
-            codedData = Files.readAllBytes(p);
-            clearTextFields();
-            codedForm.setText(byteArrayToBitString(codedData));
-        }
+    public void reset(ActionEvent actionEvent) {
+        originalData = null;
+        save1.setDisable(true);
+        clearTextFields();
     }
 
     /**
-     * Method saves encrypted byte array to file
-     *
-     * @param actionEvent eventFromJavaFX
-     * @throws InvocationTargetException exception
-     * @throws NoSuchMethodException     exception
-     * @throws IllegalAccessException    exception
-     * @throws IOException               exception
-     */
-    public void writeToFileEncrypted(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
-            IllegalAccessException, IOException {
-        String strPath = FileChoose.saveChooser("Choose a file to encrypt", false, actionEvent);
-        if (!strPath.equals("")) {
-            Path p = Paths.get(strPath);
-            Files.write(p, codedData);
-        }
-    }
-
-    /**
-     * Method to start encryption from GUI and return result on textField and encodeData
+     * Method to start encoding from GUI and return result on textField
      */
     public void encode() {
         if (singleDoubleCorrectionCombobox.getValue() == null) {
@@ -131,15 +96,15 @@ public class MainFormController {
     }
 
     /**
-     * Method to start decryption from GUI and return result on textField and to decodedData
+     * Method to start decoding from GUI and return result on textField
      */
     public void decode() {
-//        for (int i = 0; i < codedForm.getText().length(); i++) {
-//            if (codedForm.getText().charAt(i) != '0' && codedForm.getText().charAt(i) != '1') {
-//                AlertBox.alertShow("Program error", "Postać do dekodowania musi być zapisana binarnie!", Alert.AlertType.ERROR);
-//                return;
-//            }
-//        }
+        for (int i = 0; i < codedForm.getText().length(); i++) {
+            if (codedForm.getText().charAt(i) != '0' && codedForm.getText().charAt(i) != '1') {
+                AlertBox.alertShow("Program error", "Postać do dekodowania musi być zapisana binarnie!", Alert.AlertType.ERROR);
+                return;
+            }
+        }
         if (singleDoubleCorrectionCombobox.getValue() == null) {
             AlertBox.alertShow("Program error", "Nie wybrano ilości błędów", Alert.AlertType.ERROR);
             return;
@@ -164,20 +129,9 @@ public class MainFormController {
             String s = new String(textBytes, StandardCharsets.UTF_8);
             originalForm.setText(s);
         }
-    }
-
-    /**
-     * Method converts byte array to string
-     *
-     * @param data byteArray
-     * @return String
-     */
-    private String byteArrayToBitString(byte[] data) {
-        StringBuilder buffer = new StringBuilder();
-        for (byte b : data) {
-            buffer.append(Integer.toBinaryString(b));
+        if (originalData != null) {
+            save1.setDisable(false);
         }
-        return buffer.toString();
     }
 
     /**
