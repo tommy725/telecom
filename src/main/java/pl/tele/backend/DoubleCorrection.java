@@ -44,19 +44,10 @@ public class DoubleCorrection extends Correction{
                 }
             }
         }
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            if (i == diff1 || i == diff2) {
-                if(bitsString.charAt(i) == '1') {
-                    sb.append(0);
-                } else {
-                    sb.append(1);
-                }
-            } else {
-                sb.append(bitsString.charAt(i));
-            }
-        }
-        return sb.toString();
+        return get8BitsWithChangeOnPosition(
+                get8BitsWithChangeOnPosition(bitsString, diff1),
+                diff2
+        );
     }
 
     String getColumn(int[][] matrix, int column) {

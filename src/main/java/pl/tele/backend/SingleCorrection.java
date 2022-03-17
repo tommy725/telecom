@@ -1,7 +1,8 @@
 package pl.tele.backend;
+
 import java.util.Arrays;
 
-public class SingleCorrection extends Correction{
+public class SingleCorrection extends Correction {
     private int[][] hMatrix = {
             {1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0},
             {1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0},
@@ -27,23 +28,11 @@ public class SingleCorrection extends Correction{
         }
         int diff = -1;
         for (int i = 0; i < 12; i++) {
-            if(getColumn(hMatrix,i).equals(he.toString())) {
+            if (getColumn(hMatrix, i).equals(he.toString())) {
                 diff = i;
             }
         }
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            if (i == diff) {
-                if(bitsString.charAt(i) == '1') {
-                    sb.append(0);
-                } else {
-                    sb.append(1);
-                }
-            } else {
-                sb.append(bitsString.charAt(i));
-            }
-        }
-        return sb.toString();
+        return get8BitsWithChangeOnPosition(bitsString, diff);
     }
 
     String getColumn(int[][] matrix, int column) {

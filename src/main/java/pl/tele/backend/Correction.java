@@ -26,4 +26,16 @@ public abstract class Correction {
     public String decode(String bitsString) {
         return null;
     }
+
+    public String get8BitsWithChangeOnPosition(String bitsString, int diff) {
+        StringBuilder sb = new StringBuilder(bitsString.substring(0, 8));
+        if (diff > -1) {
+            if (bitsString.charAt(diff) == '1') {
+                sb.setCharAt(diff, '0');
+            } else {
+                sb.setCharAt(diff, '1');
+            }
+        }
+        return sb.toString();
+    }
 }

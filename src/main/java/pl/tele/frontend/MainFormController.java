@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.Collections;
 
 public class MainFormController {
 
@@ -218,11 +219,12 @@ public class MainFormController {
 
     private String startDecoding(Correction c, int bits) {
         if (codedForm.getText().length() % bits != 0) {
-            AlertBox.alertShow("Program error", "Liczba bitów do odkodowania przy korekcji 2 błędów musi być podzielna przez " + bits + "!", Alert.AlertType.ERROR);
+            AlertBox.alertShow("Program error", "Liczba bitów do odkodowania przy korekcji zadanej liczby błędów musi być podzielna przez " + bits + "!", Alert.AlertType.ERROR);
             return "Error";
         }
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < codedForm.getText().length(); i += bits) {
+        int length = codedForm.getText().length();
+        for (int i = 0; i < length; i += bits) {
             sb.append(c.decode(codedForm.getText().substring(i, i + bits)));
         }
         return sb.toString();
