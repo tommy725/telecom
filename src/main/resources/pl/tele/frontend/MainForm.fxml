@@ -29,7 +29,7 @@
             prefWidth="100.0" text="Koduj -&gt;"/>
     <Button fx:id="decode" layoutX="305.0" layoutY="24.0" mnemonicParsing="false" onAction="#decode" prefHeight="25.0"
             prefWidth="100.0" text="&lt;- Odkoduj"/>
-    <ComboBox fx:id="singleDoubleCorrectionCombobox" layoutX="374.0" layoutY="298.0" prefHeight="25.0" prefWidth="137.0"
+    <ComboBox fx:id="singleDoubleCorrectionCombobox" layoutX="442.0" layoutY="2.0" prefHeight="25.0" prefWidth="137.0"
               promptText="Ilość błędów">
         <items>
             <FXCollections fx:factory="observableArrayList">
@@ -40,4 +40,8 @@
     </ComboBox>
     <CheckBox fx:id="binaryCheckbox" layoutX="305.0" layoutY="6.0" mnemonicParsing="false" text="Odkoduj binarnie"/>
     <Button layoutX="276.0" layoutY="298.0" mnemonicParsing="false" onAction="#reset" text="RESET"/>
+    <Button layoutX="380.0" layoutY="298.0" mnemonicParsing="false" onAction="#readFromFile2" prefHeight="25.0"
+            prefWidth="100.0" text="Wczytaj plik"/>
+    <Button fx:id="save2" disable="true" layoutX="480.0" layoutY="298.0" mnemonicParsing="false"
+            onAction="#writeToFile2" prefHeight="25.0" prefWidth="100.0" text="Zapisz do pliku"/>
 </Pane>

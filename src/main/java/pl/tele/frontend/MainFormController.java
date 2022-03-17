@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 
@@ -25,6 +26,7 @@ public class MainFormController {
     public TextArea originalForm;
     public TextArea codedForm;
     public Button save1;
+    public Button save2;
     public ComboBox singleDoubleCorrectionCombobox;
     public CheckBox binaryCheckbox;
     public Button encode;
@@ -48,8 +50,29 @@ public class MainFormController {
             Path p = Paths.get(strPath);
             originalData = Files.readAllBytes(p);
             clearTextFields();
-            byte[] encoded = Base64.getEncoder().encode(originalData);
-            originalForm.setText(new String(encoded));
+            originalForm.setText(new String(originalData, StandardCharsets.UTF_8));
+        }
+    }
+
+    public void readFromFile2(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
+            IllegalAccessException, IOException {
+        String strPath = FileChoose.openChooser("Choose a file to encode", false, actionEvent);
+        if (!strPath.equals("")) {
+            Path p = Paths.get(strPath);
+            clearTextFields();
+            StringBuilder sb = new StringBuilder();
+            byte[] bytes = Files.readAllBytes(p);
+            for (int i = 0; i < bytes.length; i++) {
+                String bitsFromByte = Integer.toBinaryString(bytes[i]);
+                for (int j = bitsFromByte.length(); j < 8; j++) {
+                    sb.append(0);
+                }
+                if (bitsFromByte.length() > 8) {
+                    bitsFromByte = bitsFromByte.substring(bitsFromByte.length() - 8);
+                }
+                sb.append(bitsFromByte);
+            }
+            codedForm.setText(sb.toString());
         }
     }
 
@@ -67,8 +90,46 @@ public class MainFormController {
         String strPath = FileChoose.saveChooser("Choose a file to encrypt", false, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
-            Files.write(p, originalData);
+            if (originalData != null) {
+                Files.write(p, originalData);
+            } else {
+                Files.writeString(p, originalForm.getText());
+            }
         }
+    }
+
+    public void writeToFile2(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
+            IllegalAccessException, IOException {
+        String strPath = FileChoose.saveChooser("Choose a file to encrypt", false, actionEvent);
+        if (!strPath.equals("")) {
+            Path p = Paths.get(strPath);
+            byte[] bytes = new byte[codedForm.getText().length()/8];
+            for (int i = 0; i < codedForm.getText().length(); i += 8) {
+                bytes[i/8] = (byte)bitsToInt(codedForm.getText().substring(i, i + 8));
+            }
+            Files.write(p, bytes);
+        }
+    }
+
+    /**
+     * Chnage bits string to int
+     * @param bitsString bits string
+     * @return int value
+     */
+    public int bitsToInt(String bitsString) {
+        int result = 0;
+        String reversed = new StringBuilder(bitsString).reverse().toString();
+        for (int i = 0; i < 8; i++) {
+            String s = reversed.substring(i, i + 1);
+            if (s.equals("1")) {
+                int temp = 1;
+                for (int j = 0; j < i; j++) {
+                    temp *= 2;
+                }
+                result += temp;
+            }
+        }
+        return result;
     }
 
     public void reset(ActionEvent actionEvent) {
@@ -93,6 +154,7 @@ public class MainFormController {
             DoubleCorrection dc = new DoubleCorrection();
             codedForm.setText(startEncode(dc));
         }
+        save2.setDisable(false);
     }
 
     /**
@@ -126,12 +188,11 @@ public class MainFormController {
                 byte b = Byte.parseByte(decodedBitsString.substring(i, i + 8), 2);
                 textBytes[i / 8] = b;
             }
+            originalData = textBytes;
             String s = new String(textBytes, StandardCharsets.UTF_8);
             originalForm.setText(s);
         }
-        if (originalData != null) {
-            save1.setDisable(false);
-        }
+        save1.setDisable(false);
     }
 
     /**
