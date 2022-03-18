@@ -25,7 +25,7 @@ public class DoubleCorrection extends Correction{
      */
     public String decode(String bitsString) {
         StringBuilder he = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < columns; i++) {
             int rowResult = 0;
             for (int j = 0; j < 16; j++) {
                 int codedBit = Integer.parseInt(bitsString.substring(j, j + 1)); //Received bit
@@ -53,21 +53,6 @@ public class DoubleCorrection extends Correction{
                 get8BitsWithChangeOnPosition(bitsString, diff1),
                 diff2
         );
-    }
-
-    /**
-     * Return column of hMatrix
-     * @param matrix hMatrix
-     * @param column column number
-     * @return column with given number
-     */
-    String getColumn(int[][] matrix, int column) {
-        int[] bitsArray = Arrays.stream(matrix).mapToInt(ints -> ints[column]).toArray();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            sb.append(bitsArray[i]);
-        }
-        return sb.toString();
     }
 
     /**

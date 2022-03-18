@@ -1,7 +1,5 @@
 package pl.tele.backend;
 
-import java.util.Arrays;
-
 public class SingleCorrection extends Correction {
     private int[][] hMatrix = {
             {1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0},
@@ -22,7 +20,7 @@ public class SingleCorrection extends Correction {
      */
     public String decode(String bitsString) {
         StringBuilder he = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < columns; i++) {
             int rowResult = 0;
             for (int j = 0; j < 12; j++) {
                 int codedBit = Integer.parseInt(bitsString.substring(j, j + 1)); //Received bit
@@ -38,20 +36,5 @@ public class SingleCorrection extends Correction {
             }
         }
         return get8BitsWithChangeOnPosition(bitsString, diff); //Change the bit where error occured
-    }
-
-    /**
-     * Return column of hMatrix
-     * @param matrix hMatrix
-     * @param column column number
-     * @return column with given number
-     */
-    String getColumn(int[][] matrix, int column) {
-        int[] bitsArray = Arrays.stream(matrix).mapToInt(ints -> ints[column]).toArray();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
-            sb.append(bitsArray[i]);
-        }
-        return sb.toString();
     }
 }

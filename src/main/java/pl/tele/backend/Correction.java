@@ -1,8 +1,10 @@
 package pl.tele.backend;
 
+import java.util.Arrays;
+
 public abstract class Correction {
     protected int[][] hMatrix;
-    private int columns;
+    protected int columns;
 
     public Correction(int columns) {
         this.columns = columns;
@@ -30,6 +32,21 @@ public abstract class Correction {
 
     public String decode(String bitsString) {
         return null;
+    }
+
+    /**
+     * Return column of hMatrix
+     * @param matrix hMatrix
+     * @param column column number
+     * @return column with given number
+     */
+    String getColumn(int[][] matrix, int column) {
+        int[] bitsArray = Arrays.stream(matrix).mapToInt(ints -> ints[column]).toArray();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < columns; i++) {
+            sb.append(bitsArray[i]);
+        }
+        return sb.toString();
     }
 
     /**
