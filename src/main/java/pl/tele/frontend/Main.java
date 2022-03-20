@@ -16,25 +16,10 @@ public class Main {
         }
         System.out.print("Wybór: ");
         try (Port port = PortManager.getPort(s.nextInt())) {
-            System.out.println("Wybierz opcję:");
-            System.out.println("1. Nadaję");
-            System.out.println("2. Odbieram");
-            System.out.print("Wybór: ");
-            int choice = s.nextInt();
+            System.out.println("Komunikacja rozpoczęta, możesz wysłać wiadomość i/lub oczekiwać na przychodzącą:");
             while (true) {
-                switch (choice) {
-                    case 1 -> {
-                        port.send((new Scanner(System.in)).nextLine());
-                        choice = 2;
-                    }
-                    case 2 -> {
-                        port.pickUp();
-                        choice = 1;
-                    }
-                    default -> throw new Exception("Wybrano nieprawidłową opcję!");
-                }
+                port.send((new Scanner(System.in)).nextLine());
             }
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

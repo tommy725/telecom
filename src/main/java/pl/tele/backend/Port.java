@@ -23,10 +23,4 @@ public class Port implements AutoCloseable {
         byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
         port.writeBytes(messageBytes, messageBytes.length);
     }
-
-    public void pickUp() throws InterruptedException {
-        while (!SerialPortListener.isMessageReceived())
-            Thread.sleep(1000);
-        SerialPortListener.setMessageReceived(false);
-    }
 }
