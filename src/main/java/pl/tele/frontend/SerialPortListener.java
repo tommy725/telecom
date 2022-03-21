@@ -14,6 +14,9 @@ public class SerialPortListener implements SerialPortDataListener {
     public void serialEvent(SerialPortEvent serialPortEvent) {
         byte[] receivedData = serialPortEvent.getReceivedData();
         String message = new String(receivedData);
+        if (message.getBytes().length == 1 && message.getBytes()[0] == 0x15) {
+            System.out.print("(NAK 0x15)");
+        }
         System.out.println("    " + message);
     }
 }

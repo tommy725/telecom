@@ -16,9 +16,16 @@ public class Main {
         }
         System.out.print("Wybór: ");
         try (Port port = PortManager.getPort(s.nextInt())) {
-            System.out.println("Komunikacja rozpoczęta, możesz wysłać wiadomość i/lub oczekiwać na przychodzącą:");
-            while (true) {
-                port.send((new Scanner(System.in)).nextLine());
+            System.out.print("Nadajnik / Odbiornik: ");
+            String no = (new Scanner(System.in)).nextLine();
+            if (no.equals("Odbiornik")) {
+                port.sendNAK();
+            }
+            if (no.equals("Nadajnik") || no.equals("Odbiornik")) {
+                System.out.println("Komunikacja rozpoczęta jako: " + no);
+                while (true) {
+                    port.send((new Scanner(System.in)).nextLine());
+                }
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
