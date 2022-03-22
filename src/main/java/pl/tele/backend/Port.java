@@ -2,7 +2,6 @@ package pl.tele.backend;
 
 import com.fazecast.jSerialComm.SerialPort;
 
-import java.nio.charset.StandardCharsets;
 
 public class Port implements AutoCloseable{
     private final SerialPort port;
@@ -18,9 +17,8 @@ public class Port implements AutoCloseable{
         port.closePort();
     }
 
-    public void send(String message) {
-        byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
-        port.writeBytes(messageBytes, messageBytes.length);
+    public void send(byte[] bytes) {
+        port.writeBytes(bytes, bytes.length);
     }
 
     public void setConnected(boolean connected) {

@@ -7,6 +7,8 @@ import pl.tele.backend.PortManager;
 import pl.tele.backend.ReceiverPort;
 import pl.tele.backend.SenderPort;
 
+import java.util.Arrays;
+
 public class ReceiverSerialPortListener implements SerialPortDataListener {
     @Override
     public int getListeningEvents() {
@@ -16,12 +18,11 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
     @Override
     public void serialEvent(SerialPortEvent serialPortEvent) {
         byte[] receivedData = serialPortEvent.getReceivedData();
-        String message = new String(receivedData);
         ReceiverPort rp = (ReceiverPort) PortManager.getPort(serialPortEvent.getSerialPort().getSystemPortName());
         if (!rp.isConnected()) {
             System.out.println("Nazwiązano połączenie");
             rp.setConnected(true);
         }
-        System.out.println("    " + message);
+        System.out.println(Arrays.toString(receivedData));
     }
 }

@@ -15,4 +15,8 @@ public class SenderPort extends Port {
     public void setFileBytes(byte[] fileBytes) {
         this.fileBytes = fileBytes;
     }
+
+    public byte[] getFileBytes() {
+        return fileBytes;
+    }
 }
