@@ -26,4 +26,8 @@ public class Port implements AutoCloseable{
     public void setConnected(boolean connected) {
         this.connected = connected;
     }
+
+    public boolean isConnected() {
+        return connected;
+    }
 }

@@ -3,6 +3,9 @@ package pl.tele.frontend;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
+import pl.tele.backend.PortManager;
+import pl.tele.backend.ReceiverPort;
+import pl.tele.backend.SenderPort;
 
 public class ReceiverSerialPortListener implements SerialPortDataListener {
     @Override
@@ -14,6 +17,11 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
     public void serialEvent(SerialPortEvent serialPortEvent) {
         byte[] receivedData = serialPortEvent.getReceivedData();
         String message = new String(receivedData);
+        ReceiverPort rp = (ReceiverPort) PortManager.getPort(serialPortEvent.getSerialPort().getSystemPortName());
+        if (!rp.isConnected()) {
+            System.out.println("Nazwiązano połączenie");
+            rp.setConnected(true);
+        }
         System.out.println("    " + message);
     }
 }

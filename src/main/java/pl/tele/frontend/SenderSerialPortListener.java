@@ -19,12 +19,11 @@ public class SenderSerialPortListener implements SerialPortDataListener {
     public void serialEvent(SerialPortEvent serialPortEvent) {
         byte[] receivedData = serialPortEvent.getReceivedData();
         String message = new String(receivedData);
-        if (message.getBytes().length == 1 && receivedData[0] == 0x15) {
-            System.out.print("(NAK 0x15)");
-            SenderPort sp = (SenderPort) PortManager.getPort(serialPortEvent.getSerialPort().getSystemPortName());
-        }
-        if (message.getBytes().length == 1 && receivedData[0] == 0x43) {
-            System.out.print("(C 0x43)");
+        SenderPort sp = (SenderPort) PortManager.getPort(serialPortEvent.getSerialPort().getSystemPortName());
+        if (message.getBytes().length == 1 && (receivedData[0] == 0x15 || receivedData[0] == 0x43) && !sp.isConnected()) {
+            System.out.print("(" + receivedData[0] + ") Odbiornik inicuje połączenie");
+            sp.setConnected(true);
+            sp.send("TEST");
         }
         System.out.println("    " + message);
     }

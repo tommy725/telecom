@@ -14,6 +14,9 @@ public class ReceiverPort extends Port {
         for (int i = 0; i < 6; i++) {
             this.send(String.valueOf((char)0x15));
             Thread.sleep(10000);
+            if (isConnected()) {
+                break;
+            }
         }
     }
 
@@ -21,6 +24,9 @@ public class ReceiverPort extends Port {
         for (int i = 0; i < 6; i++) {
             this.send(String.valueOf((char)0x43));
             Thread.sleep(10000);
+            if (isConnected()) {
+                break;
+            }
         }
     }
 }
