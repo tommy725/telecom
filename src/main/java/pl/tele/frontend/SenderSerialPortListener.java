@@ -6,7 +6,7 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 import pl.tele.backend.PortManager;
 import pl.tele.backend.SenderPort;
 
-import java.util.Arrays;
+import static pl.tele.backend.Port.*;
 
 public class SenderSerialPortListener implements SerialPortDataListener {
     @Override
@@ -19,34 +19,28 @@ public class SenderSerialPortListener implements SerialPortDataListener {
         byte[] receivedData = serialPortEvent.getReceivedData();
         SenderPort sp = (SenderPort) PortManager.getPort(serialPortEvent.getSerialPort().getSystemPortName());
         if (sp.getBlockNumber() + 1 == sp.getBlockToSend()) {
-            if (sp.isEndingTransmision() && receivedData.length == 1 && receivedData[0] == 0x06) {
+            if (sp.isEndingTransmission() && receivedData.length == 1 && receivedData[0] == ACK) {
                 System.out.println("ZAKONCZONO POLACZENIE");
-                return;
             } else {
                 System.out.println("ZAKONCZONO PRZESYLANIE PLIKU. WYSYLANIE EOT");
-                sp.setEndingTransmision(true);
-                byte[] EOT = {0x04};
-                sp.send(EOT);
-                return;
+                sp.endTransmission();
+                sp.send(new byte[]{EOT});
             }
+            return;
         }
-        if (sp.isConnected() && receivedData.length == 1 && receivedData[0] == 0x15) {
+        if (sp.isConnected() && receivedData.length == 1 && receivedData[0] == NAK) {
             System.out.println("OTRZYMANO NACK. WYSYLANIE PONOWNIE TEGO SAMEGO BLOKU DANYCH");
             sp.send(sp.getDataBlock(false));
         }
-        if (sp.isConnected() && receivedData.length == 1 && receivedData[0] == 0x06) {
+        if (sp.isConnected() && (receivedData.length == 1) && (receivedData[0] == ACK)) {
             System.out.println("OTRZYMANO ACK. WYSYLANIE KOLEJNEGO BLOKU DANYCH");
             sp.send(sp.getDataBlock(true));
         }
-        if (receivedData.length == 1 && (receivedData[0] == 0x15 || receivedData[0] == 0x43) && !sp.isConnected()) {
-            sp.inicializeConnection(receivedData[0]);
+        if (!sp.isConnected() && receivedData.length == 1 && (receivedData[0] == NAK || receivedData[0] == C)) {
+            sp.initializeConnection(receivedData[0]);
             switch (receivedData[0]) {
-                case 0x15:
-                    System.out.println("OTRZYMANO NACK (" + receivedData[0] + "). INICJACJA POLACZENIA Z SUMA KONTROLNA");
-                    break;
-                case 0x43:
-                    System.out.println("OTRZYMANO C (" + receivedData[0] + "). INICJACJA POLACZENIA Z CRC");
-                    break;
+                case NAK -> System.out.println("OTRZYMANO NACK (" + receivedData[0] + "). INICJACJA POLACZENIA Z SUMA KONTROLNA");
+                case C -> System.out.println("OTRZYMANO C (" + receivedData[0] + "). INICJACJA POLACZENIA Z CRC");
             }
             System.out.println("WYSYLANIE PIERWSZEGO BLOKU DANYCH");
             sp.send(sp.getDataBlock(false));

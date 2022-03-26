@@ -7,8 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReceiverPort extends Port {
-    List<Byte> receivedBlock = new ArrayList<>();
-    List<Byte> finalBytes = new ArrayList<>();
+    protected List<Byte> receivedBlock = new ArrayList<>();
+    protected List<Byte> finalBytes = new ArrayList<>();
+
+    public ReceiverPort(SerialPort port) {
+        super(port);
+        port.addDataListener(new ReceiverSerialPortListener());
+    }
 
     public void addToReceivedBlock(byte[] receivedBytes) {
         for (byte b : receivedBytes) {
@@ -61,28 +66,19 @@ public class ReceiverPort extends Port {
         return (receivedBlock.get(131) == byte131 && receivedBlock.get(132) == byte132);
     }
 
-    public ReceiverPort(SerialPort port) {
-        super(port);
-        port.addDataListener(new ReceiverSerialPortListener());
-    }
-
-    public void inicializeSumConnection() throws InterruptedException {
+    public void initializeSumConnection() throws InterruptedException {
         setWithCRC(false);
-        byte[] NAK = {0x15};
-        for (int i = 0; i < 6; i++) {
-            this.send(NAK);
-            Thread.sleep(10000);
-            if (isConnected()) {
-                break;
-            }
-        }
+        initializeConnection(NAK);
     }
 
-    public void inicializeCRCConnection() throws InterruptedException {
+    public void initializeCRCConnection() throws InterruptedException {
         setWithCRC(true);
-        byte[] C = {0x43};
+        initializeConnection(C);
+    }
+
+    private void initializeConnection(byte code) throws InterruptedException {
         for (int i = 0; i < 6; i++) {
-            this.send(C);
+            this.send(new byte[]{code});
             Thread.sleep(10000);
             if (isConnected()) {
                 break;

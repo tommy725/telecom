@@ -5,14 +5,14 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import pl.tele.backend.PortManager;
 import pl.tele.backend.ReceiverPort;
-import pl.tele.backend.SenderPort;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Scanner;
+
+import static pl.tele.backend.Port.*;
 
 public class ReceiverSerialPortListener implements SerialPortDataListener {
     @Override
@@ -24,17 +24,16 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
     public void serialEvent(SerialPortEvent serialPortEvent) {
         byte[] receivedData = serialPortEvent.getReceivedData();
         ReceiverPort rp = (ReceiverPort) PortManager.getPort(serialPortEvent.getSerialPort().getSystemPortName());
-        if (receivedData.length == 1 && receivedData[0] == 0x04) {
+        if ((receivedData.length == 1) && (receivedData[0] == EOT)) {
             System.out.println("OTRZYMANO PROSBE ZAKONCZENIA POLACZENIA. WYSYLANIE ACK");
-            byte[] ACK = {0x06};
-            rp.send(ACK);
+            rp.send(new byte[]{ACK});
             System.out.println("ZAKONCZONO POLACZENIE.");
             System.out.print("Podaj ścieżkę do zapisu otrzymanego pliku: ");
             Path path = Paths.get((new Scanner(System.in)).nextLine());
             try {
                 Files.write(path, rp.getResultBytesWith0RemovedFromEnd());
             } catch (IOException e) {
-                System.out.println("Nie mozna zapisac pliku");
+                System.out.println("Nie mozna zapisać pliku");
                 e.printStackTrace();
             }
             return;
@@ -48,13 +47,11 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
             if (rp.checkReceivedBlock()) {
                 rp.moveFromTempToFinalBytes();
                 System.out.println("OTRZYMANO POPRAWNY BLOK DANYCH. WYSYLANIE ACK");
-                byte[] ACK = {0x06};
-                rp.send(ACK);
+                rp.send(new byte[]{ACK});
             } else {
                 System.out.println("OTRZYMANO NIEPOPRAWNY BLOK DANYCH. WYSYLANIE NACK");
                 rp.clearReceivedBlock();
-                byte[] NACK = {0x15};
-                rp.send(NACK);
+                rp.send(new byte[]{NAK});
             }
         } catch (IllegalStateException ignored) {
         }

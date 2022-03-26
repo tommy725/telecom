@@ -4,10 +4,10 @@ import com.fazecast.jSerialComm.SerialPort;
 import pl.tele.frontend.SenderSerialPortListener;
 
 public class SenderPort extends Port {
-    byte[] fileBytes;
-    boolean endingTransmision = false;
-    int blockNumber = 0;
-    int blockToSend = 0;
+    protected byte[] fileBytes;
+    protected boolean endingTransmission = false;
+    protected int blockNumber = 0;
+    protected int blockToSend = 0;
 
     public SenderPort(SerialPort port) {
         super(port);
@@ -22,12 +22,12 @@ public class SenderPort extends Port {
         return blockToSend;
     }
 
-    public boolean isEndingTransmision() {
-        return endingTransmision;
+    public boolean isEndingTransmission() {
+        return endingTransmission;
     }
 
-    public void setEndingTransmision(boolean endingTransmision) {
-        this.endingTransmision = endingTransmision;
+    public void endTransmission() {
+        this.endingTransmission = true;
     }
 
     public void setFileBytes(byte[] fileBytes) {
@@ -35,23 +35,21 @@ public class SenderPort extends Port {
             this.fileBytes = fileBytes;
         } else {
             int n128bytesBlocksNumber = ((fileBytes.length / 128) + 1) * 128;
-            byte[] enlongedFileBytes = new byte[n128bytesBlocksNumber];
-            System.arraycopy(fileBytes, 0, enlongedFileBytes, 0, fileBytes.length);
+            byte[] elongatedFileBytes = new byte[n128bytesBlocksNumber];
+            System.arraycopy(fileBytes, 0, elongatedFileBytes, 0, fileBytes.length);
             for (int i = fileBytes.length; i < n128bytesBlocksNumber; i++) {
-                enlongedFileBytes[i] = 0;
+                elongatedFileBytes[i] = 0;
             }
-            this.fileBytes = enlongedFileBytes;
+            this.fileBytes = elongatedFileBytes;
         }
         blockToSend = this.fileBytes.length / 128;
     }
 
-    public void inicializeConnection(byte receivedData) {
+    public void initializeConnection(byte receivedData) {
         this.setConnected(true);
-        if (receivedData == 0x15) {
-            setWithCRC(false);
-        }
-        if (receivedData == 0x43) {
-            setWithCRC(true);
+        switch (receivedData) {
+            case NAK -> setWithCRC(false);
+            case EOT -> setWithCRC(true);
         }
         blockNumber = 0;
     }
@@ -61,7 +59,7 @@ public class SenderPort extends Port {
             blockNumber++;
         }
         byte[] data = new byte[133];
-        data[0] = 0x01;
+        data[0] = SOH;
         data[1] = (byte) (blockNumber + 1);
         data[2] = (byte) (255 - (blockNumber + 1));
         for (int j = 3; j < 131; j++) {

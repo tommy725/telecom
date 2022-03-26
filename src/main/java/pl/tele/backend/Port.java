@@ -2,8 +2,15 @@ package pl.tele.backend;
 
 import com.fazecast.jSerialComm.SerialPort;
 
+public class Port implements AutoCloseable {
+    public static final byte SOH = 0x01;
+    public static final byte EOT = 0x04;
+    public static final byte ACK = 0x06;
+    public static final byte NAK = 0x15;
+    public static final byte ETB = 0x17;
+    public static final byte CAN = 0x18;
+    public static final byte C = 0x43;
 
-public class Port implements AutoCloseable{
     private final SerialPort port;
     private boolean withCRC = false;
     private boolean connected = false;
@@ -38,18 +45,18 @@ public class Port implements AutoCloseable{
         return connected;
     }
 
-    public String countChecksum(byte[] fileBytes, int blockNumber) {
+    protected String countChecksum(byte[] fileBytes, int blockNumber) {
         int checkSum = 0;
         for (int j = 3; j < 131; j++) {
             checkSum += fileBytes[blockNumber * 128 + j - 3];
         }
         String checkSumBits = Integer.toBinaryString(checkSum);
-        return(fixTo16Bits(checkSumBits));
+        return (fixTo16Bits(checkSumBits));
     }
 
-    public String countCRC(byte[] fileBytes) {
+    protected String countCRC(byte[] fileBytes) {
         short crc = 0;
-        for (byte b:fileBytes) {
+        for (byte b : fileBytes) {
             crc ^= (b << 8);
             for (int i = 0; i < 8; i++) {
                 if ((crc & 0x8000) != 0) {
@@ -60,7 +67,7 @@ public class Port implements AutoCloseable{
             }
         }
         String checkSumBits = Integer.toBinaryString(crc);
-        return(fixTo16Bits(checkSumBits));
+        return (fixTo16Bits(checkSumBits));
     }
 
     private String fixTo16Bits(String checkSumBits) {
