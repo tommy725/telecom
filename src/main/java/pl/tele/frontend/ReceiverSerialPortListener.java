@@ -24,7 +24,7 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
     public void serialEvent(SerialPortEvent serialPortEvent) {
         byte[] receivedData = serialPortEvent.getReceivedData();
         ReceiverPort rp = (ReceiverPort) PortManager.getPort(serialPortEvent.getSerialPort().getSystemPortName());
-        if ((receivedData.length == 1) && (receivedData[0] == EOT)) {
+        if (receivedData.length == 1 && receivedData[0] == EOT) {
             System.out.println("OTRZYMANO PROSBE ZAKONCZENIA POLACZENIA. WYSYLANIE ACK");
             rp.send(ACK);
             System.out.println("ZAKONCZONO POLACZENIE.");

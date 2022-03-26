@@ -37,7 +37,7 @@ public class Main {
                 }
             }
             case "Nadajnik" -> {
-                byte[] fileBytes;
+                byte[] fileBytes = null;
                 System.out.print("Podaj ścieżkę do pliku: ");
                 Path path = Paths.get((new Scanner(System.in)).nextLine());
                 if (!Files.exists(path)) {

@@ -55,7 +55,7 @@ public class Port implements AutoCloseable {
             checkSum += fileBytes[blockNumber * 128 + j - 3];
         }
         String checkSumBits = Integer.toBinaryString(checkSum);
-        return (fixTo16Bits(checkSumBits));
+        return fixTo16Bits(checkSumBits);
     }
 
     protected String countCRC(byte[] fileBytes) {
@@ -71,7 +71,7 @@ public class Port implements AutoCloseable {
             }
         }
         String checkSumBits = Integer.toBinaryString(crc);
-        return (fixTo16Bits(checkSumBits));
+        return fixTo16Bits(checkSumBits);
     }
 
     private String fixTo16Bits(String checkSumBits) {

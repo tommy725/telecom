@@ -49,7 +49,7 @@ public class SenderPort extends Port {
         this.setConnected(true);
         switch (receivedData) {
             case NAK -> setWithCRC(false);
-            case EOT -> setWithCRC(true);
+            case C -> setWithCRC(true);
         }
         blockNumber = 0;
     }
