@@ -28,13 +28,13 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
             System.out.println("OTRZYMANO PROSBE ZAKONCZENIA POLACZENIA. WYSYLANIE ACK");
             rp.send(new byte[]{ACK});
             System.out.println("ZAKONCZONO POLACZENIE.");
+
             System.out.print("Podaj ścieżkę do zapisu otrzymanego pliku: ");
             Path path = Paths.get((new Scanner(System.in)).nextLine());
             try {
                 Files.write(path, rp.getResultBytesWith0RemovedFromEnd());
             } catch (IOException e) {
                 System.out.println("Nie mozna zapisać pliku");
-                e.printStackTrace();
             }
             return;
         }
@@ -43,17 +43,14 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
             rp.setConnected(true);
         }
         rp.addToReceivedBlock(receivedData);
-        try {
-            if (rp.checkReceivedBlock()) {
-                rp.moveFromTempToFinalBytes();
-                System.out.println("OTRZYMANO POPRAWNY BLOK DANYCH. WYSYLANIE ACK");
-                rp.send(new byte[]{ACK});
-            } else {
-                System.out.println("OTRZYMANO NIEPOPRAWNY BLOK DANYCH. WYSYLANIE NACK");
-                rp.clearReceivedBlock();
-                rp.send(new byte[]{NAK});
-            }
-        } catch (IllegalStateException ignored) {
+        if (rp.checkReceivedBlock()) {
+            rp.moveFromTempToFinalBytes();
+            System.out.println("OTRZYMANO POPRAWNY BLOK DANYCH. WYSYLANIE ACK");
+            rp.send(new byte[]{ACK});
+        } else {
+            System.out.println("OTRZYMANO NIEPOPRAWNY BLOK DANYCH. WYSYLANIE NACK");
+            rp.clearReceivedBlock();
+            rp.send(new byte[]{NAK});
         }
     }
 }

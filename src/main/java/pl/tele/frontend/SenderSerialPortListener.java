@@ -46,6 +46,4 @@ public class SenderSerialPortListener implements SerialPortDataListener {
             sp.send(sp.getDataBlock(false));
         }
     }
-
-
 }
