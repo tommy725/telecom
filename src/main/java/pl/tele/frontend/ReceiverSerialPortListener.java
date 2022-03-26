@@ -26,7 +26,7 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
         ReceiverPort rp = (ReceiverPort) PortManager.getPort(serialPortEvent.getSerialPort().getSystemPortName());
         if ((receivedData.length == 1) && (receivedData[0] == EOT)) {
             System.out.println("OTRZYMANO PROSBE ZAKONCZENIA POLACZENIA. WYSYLANIE ACK");
-            rp.send(new byte[]{ACK});
+            rp.send(ACK);
             System.out.println("ZAKONCZONO POLACZENIE.");
 
             System.out.print("Podaj ścieżkę do zapisu otrzymanego pliku: ");
@@ -46,11 +46,11 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
         if (rp.checkReceivedBlock()) {
             rp.moveFromTempToFinalBytes();
             System.out.println("OTRZYMANO POPRAWNY BLOK DANYCH. WYSYLANIE ACK");
-            rp.send(new byte[]{ACK});
+            rp.send(ACK);
         } else {
             System.out.println("OTRZYMANO NIEPOPRAWNY BLOK DANYCH. WYSYLANIE NACK");
             rp.clearReceivedBlock();
-            rp.send(new byte[]{NAK});
+            rp.send(NAK);
         }
     }
 }

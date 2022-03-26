@@ -37,6 +37,10 @@ public class Port implements AutoCloseable {
         port.writeBytes(bytes, bytes.length);
     }
 
+    public void send(byte code) {
+        send(new byte[]{code});
+    }
+
     public void setConnected(boolean connected) {
         this.connected = connected;
     }

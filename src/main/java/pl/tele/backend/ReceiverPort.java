@@ -78,7 +78,7 @@ public class ReceiverPort extends Port {
 
     private void initializeConnection(byte code) throws InterruptedException {
         for (int i = 0; i < 6; i++) {
-            this.send(new byte[]{code});
+            this.send(code);
             Thread.sleep(10000);
             if (isConnected()) {
                 break;

@@ -24,7 +24,7 @@ public class SenderSerialPortListener implements SerialPortDataListener {
             } else {
                 System.out.println("ZAKONCZONO PRZESYLANIE PLIKU. WYSYLANIE EOT");
                 sp.endTransmission();
-                sp.send(new byte[]{EOT});
+                sp.send(EOT);
             }
             return;
         }
