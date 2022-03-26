@@ -44,36 +44,36 @@ public class Port implements AutoCloseable{
             checkSum += fileBytes[blockNumber * 128 + j - 3];
         }
         String checkSumBits = Integer.toBinaryString(checkSum);
-        if (checkSumBits.length() < 16) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = checkSumBits.length(); i < 16; i++) {
-                sb.append(0);
-            }
-            sb.append(checkSumBits);
-            checkSumBits = sb.toString();
-        }
-        if (checkSumBits.length() > 16) {
-            checkSumBits = checkSumBits.substring(checkSumBits.length() - 16);
-        }
-        return checkSumBits;
+        return(fixTo16Bits(checkSumBits));
     }
 
-    public String countCRC(byte[] fileBytes, int blockNumber) {
-        int checkSum = 0;
-        for (int j = 3; j < 131; j++) {
-            checkSum += fileBytes[blockNumber * 128 + j - 3];
+    public String countCRC(byte[] fileBytes) {
+        int crc = 0;
+        for (byte b:fileBytes) {
+            crc ^= (b << 8);
+            for (int i = 0; i < 8; i++) {
+                if ((crc & 0x8000) != 0) {
+                    crc = (crc << 1) ^ 0x1021;
+                } else {
+                    crc <<= 1;
+                }
+            }
         }
-        String checkSumBits = Integer.toBinaryString(checkSum);
+        String checkSumBits = Integer.toBinaryString(crc);
+        return(fixTo16Bits(checkSumBits));
+    }
+
+    private String fixTo16Bits(String checkSumBits) {
         if (checkSumBits.length() < 16) {
             StringBuilder sb = new StringBuilder();
             for (int i = checkSumBits.length(); i < 16; i++) {
                 sb.append(0);
             }
             sb.append(checkSumBits);
-            checkSumBits = sb.toString();
+            return sb.toString();
         }
         if (checkSumBits.length() > 16) {
-            checkSumBits = checkSumBits.substring(checkSumBits.length() - 16);
+            return checkSumBits.substring(checkSumBits.length() - 16);
         }
         return checkSumBits;
     }

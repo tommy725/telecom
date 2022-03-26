@@ -52,7 +52,7 @@ public class ReceiverPort extends Port {
         }
         String checkSumBits;
         if (isWithCRC()) {
-            checkSumBits = countCRC(receivedBytes, 0);
+            checkSumBits = countCRC(receivedBytes);
         } else {
             checkSumBits = countChecksum(receivedBytes, 0);
         }

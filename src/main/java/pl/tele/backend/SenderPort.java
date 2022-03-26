@@ -3,8 +3,6 @@ package pl.tele.backend;
 import com.fazecast.jSerialComm.SerialPort;
 import pl.tele.frontend.SenderSerialPortListener;
 
-import java.util.Arrays;
-
 public class SenderPort extends Port {
     byte[] fileBytes;
     boolean endingTransmision = false;
@@ -71,7 +69,11 @@ public class SenderPort extends Port {
         }
         String checkSumBits;
         if (isWithCRC()) {
-            checkSumBits = countCRC(fileBytes, blockNumber);
+            byte[] block = new byte[128];
+            for (int i = 0; i < 128; i++) {
+                block[i] = fileBytes[128 * blockNumber + i];
+            }
+            checkSumBits = countCRC(block);
         } else {
             checkSumBits = countChecksum(fileBytes, blockNumber);
         }
