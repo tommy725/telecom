@@ -48,12 +48,12 @@ public class Port implements AutoCloseable{
     }
 
     public String countCRC(byte[] fileBytes) {
-        int crc = 0;
+        short crc = 0;
         for (byte b:fileBytes) {
             crc ^= (b << 8);
             for (int i = 0; i < 8; i++) {
                 if ((crc & 0x8000) != 0) {
-                    crc = (crc << 1) ^ 0x1021;
+                    crc = (short) ((crc << 1) ^ 0x1021);
                 } else {
                     crc <<= 1;
                 }
