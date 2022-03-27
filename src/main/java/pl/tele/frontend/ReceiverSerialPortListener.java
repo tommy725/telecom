@@ -41,7 +41,7 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
             } catch (IOException e) {
                 System.out.println("Nie mozna zapisać pliku");
             }
-            return;
+            System.exit(0);
         }
         if (!rp.isConnected()) {
             System.out.println("NAWIAZANO POLACZENIE Z NADAJNIKIEM");

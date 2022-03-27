@@ -21,7 +21,7 @@ public class SenderSerialPortListener implements SerialPortDataListener {
         if (sp.getBlockNumber() + 1 >= sp.getBlockToSend() && (sp.isConnected() || sp.isEndingTransmission())) {
             if (!sp.isConnected() && receivedData.length == 1 && receivedData[0] == ACK) {
                 System.out.println("ZAKONCZONO POLACZENIE.");
-                return;
+                System.exit(0);
             }
             if (sp.isEndingTransmission() && receivedData.length == 1 && (receivedData[0] == ACK || !sp.isConnected())) {
                 System.out.println("ZAKONCZONO POLACZENIE. WYSYLANIE ETB");
