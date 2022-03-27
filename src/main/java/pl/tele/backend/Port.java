@@ -49,31 +49,42 @@ public class Port implements AutoCloseable {
         return connected;
     }
 
+    /**
+     * Count checksum (sum of 128 block bytes)
+     * @param fileBytes received 133 bytes block
+     * @param blockNumber number of block
+     * @return 16 bits string value of sum
+     */
     protected String countChecksum(byte[] fileBytes, int blockNumber) {
         int checkSum = 0;
         for (int j = 3; j < 131; j++) {
-            checkSum += fileBytes[blockNumber * 128 + j - 3];
+            checkSum += fileBytes[blockNumber * 128 + j - 3]; //Adding values of data bytes to checksum
         }
-        String checkSumBits = Integer.toBinaryString(checkSum);
-        return fixTo16Bits(checkSumBits);
+        String checkSumBits = Integer.toBinaryString(checkSum); //Changing checksum value to bitsString
+        return fixTo16Bits(checkSumBits); //return 16 bits string
     }
 
     protected String countCRC(byte[] fileBytes) {
         short crc = 0;
-        for (byte b : fileBytes) {
-            crc ^= (b << 8);
-            for (int i = 0; i < 8; i++) {
-                if ((crc & 0x8000) != 0) {
-                    crc = (short) ((crc << 1) ^ 0x1021);
+        for (byte b : fileBytes) { //For every bytes
+            crc ^= (b << 8);       //xor current crc with bytes moved 8 bits to the left
+            for (int i = 0; i < 8; i++) { //8 times:
+                if ((crc & 0x8000) != 0) { //Check if 16th bits is 1
+                    crc = (short) ((crc << 1) ^ 0x1021); //If so, reduce it with reduce polynomial (0x1021)
                 } else {
-                    crc <<= 1;
+                    crc <<= 1;                           //if not, move crc 1 bit to left
                 }
             }
         }
-        String checkSumBits = Integer.toBinaryString(crc);
-        return fixTo16Bits(checkSumBits);
+        String checkSumBits = Integer.toBinaryString(crc); //Changing crc value to bitsString
+        return fixTo16Bits(checkSumBits); //return 16 bits string
     }
 
+    /**
+     * Fix bits string to 16 bits (2 bytes)
+     * @param checkSumBits bitsString
+     * @return bitsString unified to 16 bits
+     */
     private String fixTo16Bits(String checkSumBits) {
         if (checkSumBits.length() < 16) {
             StringBuilder sb = new StringBuilder();
@@ -89,6 +100,11 @@ public class Port implements AutoCloseable {
         return checkSumBits;
     }
 
+    /**
+     * Change 8 bits string to integer number
+     * @param bitsString 8 bits string
+     * @return integer equal to 8 bits string
+     */
     int bitsToInt(String bitsString) {
         int result = 0;
         String reversed = new StringBuilder(bitsString).reverse().toString();
