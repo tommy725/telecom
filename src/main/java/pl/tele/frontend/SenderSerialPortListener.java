@@ -19,8 +19,16 @@ public class SenderSerialPortListener implements SerialPortDataListener {
         byte[] receivedData = serialPortEvent.getReceivedData();
         SenderPort sp = (SenderPort) PortManager.getPort(serialPortEvent.getSerialPort().getSystemPortName());
         if (sp.getBlockNumber() + 1 == sp.getBlockToSend()) {
-            if (sp.isEndingTransmission() && receivedData.length == 1 && receivedData[0] == ACK) {
-                System.out.println("ZAKONCZONO POLACZENIE");
+            if (!sp.isConnected() && receivedData.length == 1 && receivedData[0] == 0x06) {
+                System.out.println("ZAKONCZONO POLACZENIE.");
+                return;
+            }
+            if (sp.isEndingTransmision() && receivedData.length == 1 && (receivedData[0] == 0x06 || !sp.isConnected())) {
+                System.out.println("ZAKONCZONO POLACZENIE. WYSYLANIE ETB");
+                sp.setConnected(false);
+                byte[] ETB = {0x17};
+                sp.send(ETB);
+                return;
             } else {
                 System.out.println("ZAKONCZONO PRZESYLANIE PLIKU. WYSYLANIE EOT");
                 sp.endTransmission();
