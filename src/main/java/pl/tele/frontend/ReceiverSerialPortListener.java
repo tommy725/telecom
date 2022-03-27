@@ -30,7 +30,7 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
             rp.send(ACK);
             return;
         }
-        if (receivedData.length == 1 && receivedData[0] == EOT) {
+        if (receivedData.length == 1 && receivedData[0] == ETB) {
             System.out.println("OTRZYMANO PROSBE ZAKONCZENIA POLACZENIA. WYSYLANIE ACK");
             byte[] ACK = {0x06};
             rp.send(ACK);
