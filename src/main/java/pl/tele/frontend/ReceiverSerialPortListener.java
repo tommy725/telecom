@@ -52,14 +52,17 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
             rp.setConnected(true);
         }
         rp.addToReceivedBlock(receivedData); //adding received block of block fragment to received block bytes list
-        if (rp.checkReceivedBlock()) { //check if checksum is correct
-            rp.moveFromTempToFinalBytes(); //if check of checksum is correct we move temp received bytes to final result
-            System.out.println("OTRZYMANO POPRAWNY BLOK DANYCH. WYSYLANIE ACK");
-            rp.send(ACK); //send ACK as the packet is correct
-        } else {
-            System.out.println("OTRZYMANO NIEPOPRAWNY BLOK DANYCH. WYSYLANIE NACK"); //if check of checksum is incorrect
-            rp.clearReceivedBlock();
-            rp.send(NAK); //send NAK as the packet is incorrect
+        try {
+            if (rp.checkReceivedBlock()) { //check if checksum is correct
+                rp.moveFromTempToFinalBytes(); //if check of checksum is correct we move temp received bytes to final result
+                System.out.println("OTRZYMANO POPRAWNY BLOK DANYCH. WYSYLANIE ACK");
+                rp.send(ACK); //send ACK as the packet is correct
+            } else {
+                System.out.println("OTRZYMANO NIEPOPRAWNY BLOK DANYCH. WYSYLANIE NACK"); //if check of checksum is incorrect
+                rp.clearReceivedBlock();
+                rp.send(NAK); //send NAK as the packet is incorrect
+            }
+        } catch (IllegalStateException ignored) {
         }
     }
 }
