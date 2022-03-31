@@ -51,6 +51,7 @@ public class ReceiverPort extends Port {
             if (finalBytes.get(i) == 0) {
                 finalBytes.remove(i);
             } else {
+                finalBytes.remove(i);
                 break;
             }
         }
