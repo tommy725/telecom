@@ -41,7 +41,8 @@ public class SenderPort extends Port {
             int n128bytesBlocksNumber = ((fileBytes.length / 128) + 1) * 128; //If numOfBytes could not be divided by 128 we fulfill last block with 0s at the end
             byte[] elongatedFileBytes = new byte[n128bytesBlocksNumber];
             System.arraycopy(fileBytes, 0, elongatedFileBytes, 0, fileBytes.length);
-            for (int i = fileBytes.length; i < n128bytesBlocksNumber; i++) {
+            elongatedFileBytes[fileBytes.length] = (byte) 0xFF;
+            for (int i = fileBytes.length + 1; i < n128bytesBlocksNumber; i++) {
                 elongatedFileBytes[i] = 0;
             }
             this.fileBytes = elongatedFileBytes;
