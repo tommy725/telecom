@@ -7,6 +7,7 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ReceiverSerialPortListener implements SerialPortDataListener {
@@ -18,7 +19,7 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
     }
 
     /**
-     * Receiver port listener controlling transmission of the file
+     * Receiver port listener controlling transmission of the sound, dividing to blocks
      *
      * @param serialPortEvent port event
      */
@@ -35,6 +36,5 @@ public class ReceiverSerialPortListener implements SerialPortDataListener {
             }
             buffer.add(b);
         }
-        //rp.writeToSpeakerLine(receivedData);
     }
 }

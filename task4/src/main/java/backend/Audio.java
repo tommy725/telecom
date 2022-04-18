@@ -3,14 +3,25 @@ package backend;
 import javax.sound.sampled.*;
 
 public class Audio {
+
+    /**
+     * Define audio codec
+     * @return audio format
+     */
     public static AudioFormat getAudioFormat() {
-        return new AudioFormat(1500f,
+        return new AudioFormat(3000f,
                 8,    // sample size in bits
                 1,     // mono
                 true,  // signed
                 true); // little endian
     }
 
+    /**
+     * Get data line for reading (microphone)
+     * @param format audio format
+     * @return data line
+     * @throws LineUnavailableException exception
+     */
     public static TargetDataLine getTargetDataLineForRecord(AudioFormat format) throws LineUnavailableException {
         TargetDataLine line;
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
@@ -22,6 +33,12 @@ public class Audio {
         return line;
     }
 
+    /**
+     * Get data line for writing (speaker)
+     * @param format audio format
+     * @return data line
+     * @throws LineUnavailableException exception
+     */
     public static SourceDataLine getTargetDataLineForPlay(AudioFormat format) throws LineUnavailableException {
         SourceDataLine line;
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
