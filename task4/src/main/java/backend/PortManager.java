@@ -25,14 +25,14 @@ public class PortManager {
     }
 
     /**
-     * Inicialize port and saves it to class values.
+     * Initialize port and saves it to class values.
      *
      * @param numberOnList number of port
      * @param dataline     is source line
      * @return port object
      * @throws Exception invalid port choosen
      */
-    public static Port inicializePort(int numberOnList, SourceDataLine dataline) throws Exception {
+    public static Port initializePort(int numberOnList, SourceDataLine dataline) throws Exception {
         if (numberOnList < 1 || numberOnList > ports.length) {
             throw new Exception("Wybrano nieprawidłową opcję");
         }

@@ -15,7 +15,6 @@ public class AudioTransmitter {
             while(true) {
                 try {
                     sendFromBuffer();
-                    Thread.sleep(1);
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -38,14 +37,15 @@ public class AudioTransmitter {
      * Send from buffer if enough data
      * @throws IOException exception
      */
-    public void sendFromBuffer() throws IOException {
+    public void sendFromBuffer() throws IOException, InterruptedException {
         if (buffer != null && buffer.size() >= 8000) { //if buffer size is higher than 8000
-            System.out.println(buffer.size());
             byte[] byteArray = new byte[8000];
             for (int i = 0; i < 8000; i++) {
                 byteArray[i] = buffer.poll(); //remove from buffer, move to byte array
             }
             senderPort.send(Compressor.compress(byteArray)); //send compressed data
+        } else {
+            Thread.sleep(1);
         }
     }
 }

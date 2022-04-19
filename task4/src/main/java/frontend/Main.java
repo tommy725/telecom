@@ -4,7 +4,6 @@ import backend.*;
 import backend.Port;
 
 import javax.sound.sampled.*;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -25,7 +24,7 @@ public class Main {
                 try {
                     SourceDataLine speakerLine = Audio.getTargetDataLineForPlay(audioFormat); //get speaker line
                     speakerLine.start(); //start speaker
-                    try (ReceiverPort receiverPort = (ReceiverPort) PortManager.inicializePort(port, speakerLine)) { //inicialize port
+                    try (ReceiverPort receiverPort = (ReceiverPort) PortManager.initializePort(port, speakerLine)) { //inicialize port
                         System.out.println("Rozpoczęto nasłuchiwanie portu.");
                         while (true) { //waiting for transmission
                         }
@@ -40,7 +39,7 @@ public class Main {
                     TargetDataLine microphoneLine = Audio.getTargetDataLineForRecord(audioFormat); //get microphone stream
                     microphoneLine.start(); //start microphone
                     byte[] data = new byte[microphoneLine.getBufferSize()];
-                    try (Port senderPort = PortManager.inicializePort(port, null)) { //inicialize port
+                    try (Port senderPort = PortManager.initializePort(port, null)) { //inicialize port
                         AudioTransmitter at = new AudioTransmitter(senderPort);
                         while (true) {
                             microphoneLine.read(data, 0, data.length); //read data from microphone
