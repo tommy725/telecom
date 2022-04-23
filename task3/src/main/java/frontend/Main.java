@@ -5,7 +5,6 @@ import backend.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -41,6 +40,8 @@ public class Main {
             case "Odbiornik" -> { //if receiver
                 try (ReceiverPort receiverPort = (ReceiverPort) PortManager.inicializePort(port, true)) { //inicialize port
                     receiverPort.setRoot(root);
+                    System.out.print("Podaj ścieżkę do pliku: "); //Import file to send
+                    receiverPort.setPath(Paths.get((new Scanner(System.in)).nextLine()));
                     System.out.println("Komunikacja rozpoczęta jako: " + no);
                     while (true) {
                     }
@@ -59,7 +60,7 @@ public class Main {
                 try (SenderPort senderPort = (SenderPort) PortManager.inicializePort(port, false)) { //inicialize port
                     fileText = Files.readAllLines(path); //read all bytes of the file
                     System.out.println("Komunikacja rozpoczęta jako: " + no);
-                    printCode(root, "");
+                    ConsolePrinter.printCode(root, "");
                     StringBuilder result = new StringBuilder();
                     for (int i = 0; i < fileText.size(); i++) {
                         result.append(fileText.get(i));

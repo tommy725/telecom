@@ -6,10 +6,6 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
-import java.util.Arrays;
-
-import static backend.BitsToInt.bitsToInt;
-
 public class ReceiverSerialPortListener implements SerialPortDataListener {
     @Override
     public int getListeningEvents() {

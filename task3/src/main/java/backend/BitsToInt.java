@@ -2,7 +2,7 @@ package backend;
 
 public class BitsToInt {
     /**
-     * Chnage bits string to int
+     * Change bits string to int
      *
      * @param bitsString bits string
      * @return int value

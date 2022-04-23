@@ -2,21 +2,18 @@ package backend;
 
 import com.fazecast.jSerialComm.SerialPort;
 import frontend.ReceiverSerialPortListener;
-
 import static backend.BitsToInt.bitsToInt;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class ReceiverPort extends Port {
     protected List<String> finalResult = new ArrayList<>();
     private HuffmanNode root;
+    Path path;
 
     public ReceiverPort(SerialPort port) {
         super(port);
@@ -25,6 +22,10 @@ public class ReceiverPort extends Port {
 
     public void setRoot(HuffmanNode root) {
         this.root = root;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
     }
 
     /**
@@ -53,14 +54,11 @@ public class ReceiverPort extends Port {
         for (String s : finalResult) {
             finalSB.append(s);
         }
-        System.out.println("Otrzymano " + finalResult.size() + " bajtów");
         String result = HuffmanCoding.decode(finalSB.toString().toCharArray(), root);
-        System.out.print("Podaj ścieżkę do pliku: "); //Import file to send
-        Path path = Paths.get((new Scanner(System.in)).nextLine());
         try {
             Files.writeString(path, result.replace("\n","\r\n"));
         } catch (IOException e) {
-            System.out.println("Błąd zapisu do pliku");
+            e.printStackTrace();
         }
     }
 }
