@@ -1,26 +1,33 @@
 package backend;
 
-import com.fazecast.jSerialComm.SerialPort;
-
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import static backend.BitsToInt.bitsToInt;
 
-public class SenderPort extends Port {
-    public SenderPort(SerialPort port) {
-        super(port);
+public class SenderSocket {
+    private Socket socket;
+    private ServerSocket servsock;
+
+    public SenderSocket() {
+        try {
+            servsock = new ServerSocket(12345);
+            socket = servsock.accept();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    /**
-     * Code text usung huffman tree, change to bytes and send through COM port
-     * @param toArray chars to send integer values
-     * @param codes huffman code map
-     */
-    public void send(int[] toArray, Map<Character, String> codes) {
+    public void send(int[] bytesToSend, Map<Character, String> codes) throws IOException {
+        OutputStream socketOutputStream = socket.getOutputStream();
         StringBuilder bitsString = new StringBuilder();
-        for (int charInt : toArray) {
+        for (int charInt : bytesToSend) {
             bitsString.append(codes.get((char) charInt)); //code with huffman map
         }
         String toSend = fulfillString(bitsString.toString()); //add 0 at the end to make it % 8 = 0
@@ -31,15 +38,16 @@ public class SenderPort extends Port {
         byte[] byteArray = new byte[integers.size()];
         for (int i = 0; i < integers.size(); i++) { //change int to byte
             int temp = integers.get(i);
-            byteArray[i] = (byte)temp;
+            byteArray[i] = (byte) temp;
         }
-        super.send(byteArray); //send compressed message
-        super.send((byte) 0x04); //send EOT
-        super.send((byte) (8 - (bitsString.length() % 8))); //send number of 0 added in last byte
+        socketOutputStream.write(byteArray); //send compressed message
+        socketOutputStream.write((byte) 0x04); //send EOT
+        socketOutputStream.write((byte) (8 - (bitsString.length() % 8))); //send number of 0 added in last byte
     }
 
     /**
      * Fulfill bits string to 8 bits
+     *
      * @param bitsString bits string to fulfill
      * @return 8 bits string
      */

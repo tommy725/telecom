@@ -2,6 +2,7 @@ package frontend;
 
 import backend.*;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,28 +27,13 @@ public class Main {
         HuffmanNode root = HuffmanCoding.createTree(HuffmanCoding.inicializeNodes(chars, probabilities));
         Map<Character, String> codes = getCodes(root);
 
-        String[] portsList = PortManager.getPortsNameList();
-        System.out.println("Wybierz port:");
-        for (String port : portsList) {
-            System.out.println(port); //Display port list
-        }
-        System.out.print("Wybór: ");
-        int port = (new Scanner(System.in)).nextInt(); //Choose port
-
         System.out.print("Nadajnik / Odbiornik: ");
         String no = (new Scanner(System.in)).nextLine(); //Choose if sender of receiver
         switch (no) {
             case "Odbiornik" -> { //if receiver
-                try (ReceiverPort receiverPort = (ReceiverPort) PortManager.inicializePort(port, true)) { //inicialize port
-                    receiverPort.setRoot(root);
-                    System.out.print("Podaj ścieżkę do pliku: "); //Import file to send
-                    receiverPort.setPath(Paths.get((new Scanner(System.in)).nextLine()));
-                    System.out.println("Komunikacja rozpoczęta jako: " + no);
-                    while (true) {
-                    }
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+                System.out.println("Komunikacja rozpoczęta jako: " + no);
+                System.out.print("Podaj ścieżkę do pliku: "); //Import file to send
+                ReceiverSocket rs = new ReceiverSocket(Paths.get((new Scanner(System.in)).nextLine()),root);
             }
             case "Nadajnik" -> { //if sender
                 List<String> fileText = null;
@@ -57,20 +43,25 @@ public class Main {
                     System.out.println("Plik nie znaleziony!"); //If file not exists stop
                     return;
                 }
-                try (SenderPort senderPort = (SenderPort) PortManager.inicializePort(port, false)) { //inicialize port
+                try {
                     fileText = Files.readAllLines(path); //read all bytes of the file
-                    System.out.println("Komunikacja rozpoczęta jako: " + no);
-                    ConsolePrinter.printCode(root, "");
-                    StringBuilder result = new StringBuilder();
-                    for (int i = 0; i < fileText.size(); i++) {
-                        result.append(fileText.get(i));
-                        if (i != fileText.size() - 1) {
-                            result.append("\n");
-                        }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Komunikacja rozpoczęta jako: " + no);
+                ConsolePrinter.printCode(root, "");
+                StringBuilder result = new StringBuilder();
+                for (int i = 0; i < fileText.size(); i++) {
+                    result.append(fileText.get(i));
+                    if (i != fileText.size() - 1) {
+                        result.append("\n");
                     }
-                    senderPort.send(result.chars().toArray(),codes);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                }
+                SenderSocket ss = new SenderSocket();
+                try {
+                    ss.send(result.chars().toArray(),codes);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
             default -> System.out.println("Wybrano nieprawidłową opcję"); //incorrect option
