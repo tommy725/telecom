@@ -1,0 +1,55 @@
+package backend;
+
+import javax.sound.sampled.SourceDataLine;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.Socket;
+
+public class ReceiverSocket {
+    private SourceDataLine speakerLine;
+    private Socket socket;
+
+    public ReceiverSocket(String serverIP, SourceDataLine speakerLine) {
+        this.speakerLine = speakerLine;
+        try {
+            do {
+                try {
+                    socket = new Socket(serverIP, 12345);
+                } catch (ConnectException ignored) {
+                }
+            } while (socket == null);
+            listen(socket.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void listen(InputStream is) {
+        try {
+            while (true) {
+                int b1 = is.read();
+                int b2 = is.read();
+                int b3 = is.read();
+                int b4 = is.read();
+                byte[] bArray = new byte[]{(byte) b1, (byte) b2, (byte) b3, (byte) b4};
+                writeToSpeakerLine(bArray);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Write received data directly to the speaker
+     *
+     * @param data byte array to write
+     */
+    public void writeToSpeakerLine(byte[] data) {
+        try {
+            speakerLine.write(data, 0, 4); //write to speaker line
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
