@@ -16,14 +16,13 @@ public class ReceiverSocket {
     protected List<String> finalResult = new ArrayList<>();
     private Path path;
     private HuffmanNode root;
-    private boolean started = false;
     private boolean ended = false;
 
-    public ReceiverSocket(Path path, HuffmanNode root) {
+    public ReceiverSocket(Path path, HuffmanNode root, String serverIP) {
         try {
             do {
                 try {
-                    socket = new Socket("127.0.0.1", 12345);
+                    socket = new Socket(serverIP, 12345);
                 } catch (ConnectException ignored) {
                 }
             } while (socket == null);
@@ -37,8 +36,7 @@ public class ReceiverSocket {
 
     public void listen(InputStream is) {
         try {
-            while ((is.available() != 0 || !started) && !ended) {
-                started = true;
+            while (!ended) {
                 String bString = Integer.toBinaryString(is.read());
                 if (bString.length() > 8) {
                     bString = bString.substring(bString.length() - 8);

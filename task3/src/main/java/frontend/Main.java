@@ -32,8 +32,10 @@ public class Main {
         switch (no) {
             case "Odbiornik" -> { //if receiver
                 System.out.println("Komunikacja rozpoczęta jako: " + no);
+                System.out.print("Podaj IP serwera: ");
+                String serverIp = new Scanner(System.in).nextLine();
                 System.out.print("Podaj ścieżkę do pliku: "); //Import file to send
-                ReceiverSocket rs = new ReceiverSocket(Paths.get((new Scanner(System.in)).nextLine()),root);
+                ReceiverSocket rs = new ReceiverSocket(Paths.get((new Scanner(System.in)).nextLine()), root, serverIp);
             }
             case "Nadajnik" -> { //if sender
                 List<String> fileText = null;
@@ -59,7 +61,7 @@ public class Main {
                 }
                 SenderSocket ss = new SenderSocket();
                 try {
-                    ss.send(result.chars().toArray(),codes);
+                    ss.send(result.chars().toArray(), codes);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
