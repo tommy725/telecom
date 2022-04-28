@@ -28,11 +28,10 @@ public class ReceiverSocket {
     public void listen(InputStream is) {
         try {
             while (true) {
-                int b1 = is.read();
-                int b2 = is.read();
-                int b3 = is.read();
-                int b4 = is.read();
-                byte[] bArray = new byte[]{(byte) b1, (byte) b2, (byte) b3, (byte) b4};
+                byte[] bArray = new byte[4];
+                for (int i = 0; i < bArray.length; i++) {
+                    bArray[i] = (byte) is.read();
+                }
                 writeToSpeakerLine(bArray);
             }
         } catch (IOException e) {
