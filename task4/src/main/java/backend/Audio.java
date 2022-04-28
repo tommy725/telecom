@@ -9,9 +9,9 @@ public class Audio {
      * @return audio format
      */
     public static AudioFormat getAudioFormat() {
-        return new AudioFormat(3000f,
-                8,    // sample size in bits
-                1,     // mono
+        return new AudioFormat(48000f,
+                16,    // sample size in bits
+                2,     // mono
                 true,  // signed
                 true); // little endian
     }
