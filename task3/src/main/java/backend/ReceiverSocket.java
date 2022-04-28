@@ -1,31 +1,54 @@
 package backend;
 
-import com.fazecast.jSerialComm.SerialPort;
-import frontend.ReceiverSerialPortListener;
-import static backend.BitsToInt.bitsToInt;
-
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReceiverPort extends Port {
+import static backend.BitsToInt.bitsToInt;
+
+public class ReceiverSocket {
+    private Socket socket;
     protected List<String> finalResult = new ArrayList<>();
+    private Path path;
     private HuffmanNode root;
-    Path path;
+    private boolean ended = false;
 
-    public ReceiverPort(SerialPort port) {
-        super(port);
-        port.addDataListener(new ReceiverSerialPortListener());
+    public ReceiverSocket(Path path, HuffmanNode root, String serverIP) {
+        try {
+            do {
+                try {
+                    socket = new Socket(serverIP, 12345);
+                } catch (ConnectException ignored) {
+                }
+            } while (socket == null);
+            this.root = root;
+            this.path = path;
+            listen(socket.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setRoot(HuffmanNode root) {
-        this.root = root;
-    }
-
-    public void setPath(Path path) {
-        this.path = path;
+    public void listen(InputStream is) {
+        try {
+            while (!ended) {
+                String bString = Integer.toBinaryString(is.read());
+                if (bString.length() > 8) {
+                    bString = bString.substring(bString.length() - 8);
+                }
+                if (bString.length() < 8) {
+                    bString = "0".repeat(8 - bString.length()) + bString;
+                }
+                addToReceivedBlock(bString);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -45,6 +68,7 @@ public class ReceiverPort extends Port {
 
     /**
      * End transmission, remove 0 from the last String based on last byte, save to file
+     *
      * @param zeros number of 0 added in last but one byte
      */
     public void endTransmissionAndSave(int zeros) {
@@ -56,9 +80,10 @@ public class ReceiverPort extends Port {
         }
         String result = HuffmanCoding.decode(finalSB.toString().toCharArray(), root);
         try {
-            Files.writeString(path, result.replace("\n","\r\n"));
+            Files.writeString(path, result.replace("\n", "\r\n"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        ended = true;
     }
 }
