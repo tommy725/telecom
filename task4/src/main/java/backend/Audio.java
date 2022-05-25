@@ -8,14 +8,13 @@ public class Audio {
      * Define audio codec
      * @return audio format
      */
-    public static AudioFormat getAudioFormat() {
-        return new AudioFormat(48000f,
-                16,    // sample size in bits
-                2,     // mono
+    public static AudioFormat getAudioFormat(float sampleRate, int sameSizeInBits) {
+        return new AudioFormat(sampleRate,
+                sameSizeInBits,    // sample size in bits
+                2,     // stereo
                 true,  // signed
                 true); // little endian
     }
-
     /**
      * Get data line for reading (microphone)
      * @param format audio format

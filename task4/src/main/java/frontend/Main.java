@@ -8,7 +8,11 @@ public class Main {
     public static void main(String[] args) {
         System.out.print("Nadajnik / Odbiornik: ");
         String no = (new Scanner(System.in)).nextLine(); //Choose if sender of receiver
-        AudioFormat audioFormat = Audio.getAudioFormat(); //Initialize audio format
+        System.out.print("Częstotliwość próbkowania: ");
+        float sampleRate  = (new Scanner(System.in)).nextFloat(); //Choose sample rate
+        System.out.print("Liczba bitów poziomu kwantyzacji: ");
+        int bitsInSample = (new Scanner(System.in)).nextInt(); //Choose bits num in sample
+        AudioFormat audioFormat = Audio.getAudioFormat(sampleRate, bitsInSample); //Initialize audio format
         switch (no) {
             case "Odbiornik" -> { //if receiver
                 try {
